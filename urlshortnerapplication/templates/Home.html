@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener | Home Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Create a temporary notification for better UX
+                const notification = document.createElement('div');
+                notification.innerText = 'Copied to clipboard: ' + text;
+                notification.className = 'fixed bottom-5 right-5 bg-green-500 text-white rounded-md p-2 shadow-lg';
+                document.body.appendChild(notification);
+
+                // Remove notification after 2 seconds
+                setTimeout(() => {
+                    notification.remove();
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+    </script>
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center h-screen">
+    <div class="text-center p-6 bg-gray-800 rounded-lg shadow-lg">
+        <h1 class="text-5xl font-bold mb-6 text-blue-400">Welcome to URL Shortener!</h1>
+        <p class="text-xl mb-8">Enter a URL below:</p>
+
+        <form method="POST" class="flex items-center justify-center">
+            {% csrf_token %}
+            <input type="url" name="url" class="border border-gray-700 bg-gray-700 rounded-md px-4 py-2 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter URL here" required>
+            <button type="submit" class="ml-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 transition duration-300 ease-in-out transform hover:scale-105">Submit</button>
+        </form>
+
+        {% if url %}
+        <p class="mt-6 text-green-400">You submitted: <span class="text-blue-400">{{ url }}</span></p>
+        {% endif %}
+        {% if uuid %}
+        <p class="mt-6 text-green-400 flex flex-col">Shortened Url: 
+            <span id="shortened-url" class="text-gray-900 hover:bg-blue-500 rounded-md p-1 bg-blue-400 border-2 border-blue-100 cursor-pointer" onclick="copyToClipboard('http://127.0.0.1:8000/{{ uuid }}')">
+                http://127.0.0.1:8000/{{ uuid }}
+            </span>
+            <span>click to copy</span>
+        </p>
+        {% endif %}
+    </div>
+</body>
+</html>
